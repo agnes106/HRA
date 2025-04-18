@@ -15,12 +15,5 @@ class MingleHra:
         self.pozadi = Label(self.okno, image=self.foto)         #Label = je to widget, který zobrazuje text či obrázek, image=self.foto = načtení obrázku PIL
         self.pozadi.place(x=0, y=0, relwidth=1, relheight=1)    # ty rel veci nam rikaji aby se obrazek rozprostrel pres cele okno
 
-<<<<<<< HEAD
 hra=MingleHra()
 hra.okno.mainloop()
-=======
-# Nakreslení srdce pomocí dvou kruhů a trojúhelníku
-
-# Spuštění aplikace
-root.mainloop()
->>>>>>> 38b6ec94a0da40d974407f782d114381c72a50be
