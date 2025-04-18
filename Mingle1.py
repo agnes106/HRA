@@ -1,17 +1,19 @@
-import tkinter as tk
+from tkinter import *
+from PIL import Image, ImageTk   # pro nacteni obrazku na pozadi, PIL= python imaginary library--> museli jsme nainstalovat pillow 
 
-# Vytvoření hlavního okna
-root = tk.Tk()
-root.title("Srdíčko")
+class MingleHra:
+    def __init__(self):
+        self.okno = Tk()
+        self.okno.title("Mingle")
+        self.okno.geometry("676x380")
+        self.okno.configure(bg="#f0f0f0")
 
-# Vytvoření plátna
-canvas = tk.Canvas(root, width=300, height=300, bg="white")
-canvas.pack()
+        #tohle je pro nacteni obrazku
+        self.obrazek = Image.open("minglepozadi.png")
+        self.foto = ImageTk.PhotoImage(self.obrazek)
+        #tohle je pro to pozadi
+        self.pozadi = Label(self.okno, image=self.foto)         #Label = je to widget, který zobrazuje text či obrázek, image=self.foto = načtení obrázku PIL
+        self.pozadi.place(x=0, y=0, relwidth=1, relheight=1)    # ty rel veci nam rikaji aby se obrazek rozprostrel pres cele okno
 
-# Nakreslení srdce pomocí dvou kruhů a trojúhelníku
-canvas.create_oval(50, 50, 150, 150, fill="red", outline="red")  # Levý kruh
-canvas.create_oval(150, 50, 250, 150, fill="red", outline="red")  # Pravý kruh
-canvas.create_polygon(50, 100, 250, 100, 150, 250, fill="red", outline="red")  # Spodní část
-
-# Spuštění aplikace
-root.mainloop()
+hra=MingleHra()
+hra.okno.mainloop()
