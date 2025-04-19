@@ -22,11 +22,47 @@ class MingleHra:
         self.text = Label(self.okno, text="", font=("Arial", 30), bg="white")    # anchor = říká, že střed tlačítka bude umístěn do toho bodu
         self.text.place(relx=0.5, rely=0.4, anchor="center")
                                                               
-    def zobraz_cislo(self):
-        cislo = random.randint(100, 100000)  # náhodné číslo
-        self.text.config(text=str(cislo))    # self.text.config(text=str(cislo)) = zmeni text label na dalsi nahodne cislo 
-                                             # config = metoda, která mění funkce widgetu poté co už byl vytvořen (funguje i na barvy a tak)
+    # tlacitka na vyber odpovedi, ted jsou jeste prazdna
+       
+        self.tlacitko1 = Button(self.okno, text="", font=("Arial", 12), command=lambda: self.zkontroluj_odpoved(0))
+        self.tlacitko2 = Button(self.okno, text="", font=("Arial", 12), command=lambda: self.zkontroluj_odpoved(1))
+        self.tlacitko3 = Button(self.okno, text="", font=("Arial", 12), command=lambda: self.zkontroluj_odpoved(2))
+        self.tlacitko4 = Button(self.okno, text="", font=("Arial", 12), command=lambda: self.zkontroluj_odpoved(3))
+        # lambda = malá funkce, která nám pomáhá vytvorit funkci bez def 
+        # Po kliknutí na tlačítko se zavolá metoda zkontroluj_odpoved(0)
+        # Číslo v závorce určuje, které tlačítko bylo zmáčknuto (0 = první tlačítko, 1 = druhé, atd.)
 
+      # umístění tlačítek v obraze
+        self.tlacitko1.place(relx=0.2, rely=0.6, anchor="center")
+        self.tlacitko2.place(relx=0.4, rely=0.6, anchor="center")
+        self.tlacitko3.place(relx=0.6, rely=0.6, anchor="center")
+        self.tlacitko4.place(relx=0.8, rely=0.6, anchor="center")
+       # proměnná, none= je zatim prázdná  (předpřipravení proměnné)
+        self.spravne_cislo = None
+
+    def zobraz_cislo(self):
+        self.spravne_cislo = random.randint(100, 100000)  # self.text.config(text=str(cislo)) = zmeni text label na dalsi nahodne cislo 
+                                                          # config = metoda, která mění funkce widgetu poté co už byl vytvořen (funguje i na barvy a tak)
+        self.text.config(text=str(self.spravne_cislo))
+
+        # vygenerujeme náhodné odpovědi včetně správné
+        moznosti = [self.spravne_cislo]
+        while len(moznosti) < 4:
+            nahodne = random.randint(100, 100000)
+            if nahodne not in moznosti:       # kontroluje, že tam náhodné číslo ještě není
+                moznosti.append(nahodne)
+        random.shuffle(moznosti)   # náhodné zamíchání prvků = shuffle
+
+        # nastavíme texty tlačítek
+        self.tlacitko1.config(text=str(moznosti[0]))
+        self.tlacitko2.config(text=str(moznosti[1]))
+        self.tlacitko3.config(text=str(moznosti[2]))
+        self.tlacitko4.config(text=str(moznosti[3]))
+
+    def zkontroluj_odpoved(self, index):   # funkce dostává jako úvodní info index (0-3)       index pak také vybere ten na, který hráč klikl
+        vybrane = int([self.tlacitko1["text"], self.tlacitko2["text"], self.tlacitko3["text"], self.tlacitko4["text"]][index])
+        if vybrane == self.spravne_cislo:
+            self.zobraz_cislo()  # když je odpověď správná, zobrazí se nové číslo
 
 
 hra=MingleHra()
