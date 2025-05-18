@@ -46,6 +46,12 @@ class MingleHra:
         self.zpozdeni = 6000  # ms, jak dlouho je cislo videt
         self.casovac = None    # uchovava id timeoutu
         self.odpocet = None    # uchovava odpočet sek
+        #skore
+        self.skore = 0
+        self.zpozdeni = 3000
+        self.min_zpozdeni = 1000
+        self.text_skore = Label(self.okno, text="Skóre: 0", font=("Arial", 16), fg="white", bg="black")
+        self.text_skore.place(x=0, y=80)
 
         # Odpovedni tlacitka (zatim disabled)
         self.tlacitko1 = Button(self.okno, text="", font=("Arial", 12), command=lambda: self.zkontroluj_odpoved(0), state="disabled")
@@ -105,10 +111,17 @@ class MingleHra:
             self.odpocet -= 1
             self.okno.after(1000, self.update_odpocet)
 
-    def zkontroluj_odpoved(self, index):
+    """def zkontroluj_odpoved(self, index):
         # kontrola odpovedi
         vybrane = int([self.tlacitko1["text"], self.tlacitko2["text"],
                        self.tlacitko3["text"], self.tlacitko4["text"]][index])
+        self.skore += 1
+        self.text_skore.config(text=f"Skóre: {self.skore}")
+        self.zpozdeni = max(self.zpozdeni - 100, self.min_zpozdeni)
+
+        if tlacitko["text"] == str(self.spravne_cislo):
+        self.skore += 1
+
         # zrus casovac
         if self.casovac:
             self.okno.after_cancel(self.casovac)
@@ -119,7 +132,27 @@ class MingleHra:
             if self.zivoty <= 0:
                 self.konec_hry("Špatně! Hra končí.") # taky nezobrazuje zjistit proč ig 
             else:
-                self.zobraz_cislo()
+                self.zobraz_cislo()"""
+    def zkontroluj_odpoved(self, index):
+    # kontrola odpovedi
+      vybrane = int([self.tlacitko1["text"], self.tlacitko2["text"],
+                   self.tlacitko3["text"], self.tlacitko4["text"]][index])
+
+    # zrus casovac
+      if self.casovac:
+        self.okno.after_cancel(self.casovac)
+
+      if vybrane == self.spravne_cislo:
+        self.skore += 1  # skóre přičteme JEN při správné odpovědi
+        self.text_skore.config(text=f"Skóre: {self.skore}")
+        self.zpozdeni = max(self.zpozdeni - 100, self.min_zpozdeni)
+        self.zobraz_cislo()
+      else:
+        self.zivoty -= 1
+        if self.zivoty <= 0:
+            self.konec_hry("Špatně! Hra končí.")  # taky nezobrazuje zjistit proč ig
+        else:
+            self.zobraz_cislo()           
 
     def konec_hry(self, zprava):
         # konec hry, deaktivace tlacitek a zobrazeni zpravy
@@ -131,17 +164,28 @@ class MingleHra:
         self.restart_btn = Button(self.okno, text="Hrát znovu", font=("Arial", 14), command=self.restartuj)
         self.restart_btn.place(relx=0.5, rely=0.8, anchor="center")
 
+        self.text_info.config(text=zprava)
+        self.text_info.place(relx=0.5, rely=0.4, anchor="center")  # ← přidat
+
     def restartuj(self):  # NOVÉ
         # odstraneni restart tlacitka
-        self.restart_btn.destroy()  #tlačítko „Hrát znovu“, které se objevilo po skončení hry.
+       #tlačítko „Hrát znovu“, které se objevilo po skončení hry.
         # obnoveni zivota       # destroy ---> úplné odstraběbí z okna
-        self.zivoty = 3
-        self.text_info.place_forget()  #self.text_info je label s mluvící bublinou panáčka (nebo úvodní text).
+   
+          #self.text_info je label s mluvící bublinou panáčka (nebo úvodní text).
 
                     #Metoda place_forget() ho skryje (nezruší úplně, ale stáhne ho z viditelné plochy), aby byl čistý štít pro novou hru.
         # spustit novou hru
+        self.restart_btn.destroy()
+        self.zivoty = 3
+        self.skore = 0
+        self.zpozdeni = 3000
+        self.text_skore.config(text="Skóre: 0")
+        self.text_info.place_forget()
         self.zacni_hru()
 
 # spust hru
 hra = MingleHra()
 hra.okno.mainloop()
+
+# nápady na další postup ----> počítání skóre a nějak zrychlit ten šas ig snad to půjde, vymyslet ještě tak 60 řádků
