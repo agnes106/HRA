@@ -19,10 +19,17 @@ class MingleHra:
 
         # Panáček - načtení a zobrazení
         self.panacek_img = Image.open("vojaksq.png")  # cesta k panáčkovi
-        self.panacek_img = self.panacek_img.resize((100, 200))  # uprava velikosti
+        self.panacek_img = self.panacek_img.resize((80, 20))  # uprava velikosti
         self.panacek_photo = ImageTk.PhotoImage(self.panacek_img)
-        self.panacek_label = Label(self.okno, image=self.panacek_photo, bg="#f0f0f0")
-        self.panacek_label.place(x=10, y=200)  # umisteni do leva dolu
+
+        # Načtení všech výrazů panáčka
+        self.panacek_normal = ImageTk.PhotoImage(Image.open("vojaksq.png"))
+        self.panacek_radost = ImageTk.PhotoImage(Image.open("vojaksqhappy.png"))
+        self.panacek_smutek = ImageTk.PhotoImage(Image.open("vojaksqsad.png"))    
+
+        # Zobrazení panáčka s výchozím výrazem
+        self.label_panacek = Label(self.okno, image=self.panacek_normal, bg="white")  # bg dle potřeby
+        self.label_panacek.place(x=20, y=30)  # pozice podle tebe
 
         # Text panáčka
         self.text_info = Label(self.okno, text="Vítejte ve hře Mingle! Zapamatujte si číslo, které se objeví na obrazovce.",
@@ -111,32 +118,26 @@ class MingleHra:
             self.odpocet -= 1
             self.okno.after(1000, self.update_odpocet)
 
-    """def zkontroluj_odpoved(self, index):
-        # kontrola odpovedi
-        vybrane = int([self.tlacitko1["text"], self.tlacitko2["text"],
-                       self.tlacitko3["text"], self.tlacitko4["text"]][index])
-        self.skore += 1
-        self.text_skore.config(text=f"Skóre: {self.skore}")
-        self.zpozdeni = max(self.zpozdeni - 100, self.min_zpozdeni)
+    def zobraz_reakci(self, vysledek):
+        if vysledek == "spravne":
+            self.label_panacek.config(image=self.panacek_radost)
+        elif vysledek == "spatne":
+            self.label_panacek.config(image=self.panacek_smutek)
 
-        if tlacitko["text"] == str(self.spravne_cislo):
-        self.skore += 1
+    # Po 1 vteřině se vrátí na výchozí výraz
+        self.okno.after(1000, lambda: self.label_panacek.config(image=self.panacek_normal))
 
-        # zrus casovac
-        if self.casovac:
-            self.okno.after_cancel(self.casovac)
-        if vybrane == self.spravne_cislo:
-            self.zobraz_cislo()
-        else:
-            self.zivoty -= 1
-            if self.zivoty <= 0:
-                self.konec_hry("Špatně! Hra končí.") # taky nezobrazuje zjistit proč ig 
-            else:
-                self.zobraz_cislo()"""
     def zkontroluj_odpoved(self, index):
     # kontrola odpovedi
       vybrane = int([self.tlacitko1["text"], self.tlacitko2["text"],
                    self.tlacitko3["text"], self.tlacitko4["text"]][index])
+      
+      if vybrane == self.spravne_cislo:
+            self.zobraz_reakci("spravne")
+    # další kód...
+      else:
+         self.zobraz_reakci("spatne")
+    # další kód...
 
     # zrus casovac
       if self.casovac:
@@ -152,7 +153,7 @@ class MingleHra:
         if self.zivoty <= 0:
             self.konec_hry("Špatně! Hra končí.")  # taky nezobrazuje zjistit proč ig
         else:
-            self.zobraz_cislo()           
+            self.zobraz_cislo()      
 
     def konec_hry(self, zprava):
         # konec hry, deaktivace tlacitek a zobrazeni zpravy
@@ -167,25 +168,42 @@ class MingleHra:
         self.text_info.config(text=zprava)
         self.text_info.place(relx=0.5, rely=0.4, anchor="center")  # ← přidat
 
-    def restartuj(self):  # NOVÉ
-        # odstraneni restart tlacitka
-       #tlačítko „Hrát znovu“, které se objevilo po skončení hry.
-        # obnoveni zivota       # destroy ---> úplné odstraběbí z okna
-   
-          #self.text_info je label s mluvící bublinou panáčka (nebo úvodní text).
-
-                    #Metoda place_forget() ho skryje (nezruší úplně, ale stáhne ho z viditelné plochy), aby byl čistý štít pro novou hru.
-        # spustit novou hru
-        self.restart_btn.destroy()
+    def restartuj(self):
+        # Reset proměnných
         self.zivoty = 3
         self.skore = 0
         self.zpozdeni = 3000
         self.text_skore.config(text="Skóre: 0")
-        self.text_info.place_forget()
-        self.zacni_hru()
+        self.label_zivoty.config(text="Životy:3")
 
+        # Skryj tlačítko restart
+        self.restart_btn.destroy()
+
+        # Zobraz znovu číslo
+        self.zobraz_cislo()
+
+        # Aktivuj tlačítka odpovědí
+        for b in (self.tlacitko1, self.tlacitko2, self.tlacitko3, self.tlacitko4):
+            b.config(state="normal")
+
+        # Skryj zprávu o konci
+        self.text_info.config(text="")
+        self.text_info.place_forget()
+
+        # Skrytí restart tlačítka a zprávy
+        self.restart_btn.destroy()
+        self.text_info.place_forget()
+
+        # Aktivace tlačítek
+        for b in (self.tlacitko1, self.tlacitko2, self.tlacitko3, self.tlacitko4):
+            b.config(state="normal")
+
+        # Spuštění nové hry
+        self.zobraz_cislo()
+    
 # spust hru
 hra = MingleHra()
 hra.okno.mainloop()
 
 # nápady na další postup ----> počítání skóre a nějak zrychlit ten šas ig snad to půjde, vymyslet ještě tak 60 řádků
+# nefunguje tam ta reakce s tim panackem takze to upravit
