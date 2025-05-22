@@ -25,7 +25,7 @@ class MingleHra:
         # Načtení všech výrazů panáčka
         self.panacek_normal = ImageTk.PhotoImage(Image.open("vojaksq.png"))
         self.panacek_radost = ImageTk.PhotoImage(Image.open("vojaksqhappy.png"))
-        self.panacek_smutek = ImageTk.PhotoImage(Image.open("vojaksqsad.png"))    
+        self.panacek_smutek = ImageTk.PhotoImage(Image.open("vojaksqsad.png"))   
 
         # Zobrazení panáčka s výchozím výrazem
         self.label_panacek = Label(self.okno, image=self.panacek_normal, bg="white")  # bg dle potřeby
@@ -151,7 +151,7 @@ class MingleHra:
       else:
         self.zivoty -= 1
         if self.zivoty <= 0:
-            self.konec_hry("Špatně! Hra končí.")  # taky nezobrazuje zjistit proč ig
+            self.konec_hry("Prohrál jsi!")
         else:
             self.zobraz_cislo()      
 
@@ -167,6 +167,8 @@ class MingleHra:
 
         self.text_info.config(text=zprava)
         self.text_info.place(relx=0.5, rely=0.4, anchor="center")  # ← přidat
+
+        self.text_info.place(relx=0.5, rely=0.4, anchor="center")
 
     def restartuj(self):
         # Reset proměnných
@@ -204,6 +206,3 @@ class MingleHra:
 # spust hru
 hra = MingleHra()
 hra.okno.mainloop()
-
-# nápady na další postup ----> počítání skóre a nějak zrychlit ten šas ig snad to půjde, vymyslet ještě tak 60 řádků
-# nefunguje tam ta reakce s tim panackem takze to upravit
